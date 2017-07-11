@@ -1,0 +1,19 @@
+{
+  "name": "shinnakehtbe",
+  "version": "1.0.0",
+  "description": "backend for shinnakeht",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AimeTPGM/shinnakeht-backend.git"
+  },
+  "author": "AimeTPGM",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AimeTPGM/shinnakeht-backend/issues"
+  },
+  "homepage": "https://github.com/AimeTPGM/shinnakeht-backend#readme"
+}

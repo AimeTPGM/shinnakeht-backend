@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/AimeTPGM/shinnakeht-backend#readme",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.14.1",
     "mongoose": "^4.5.8"
   }

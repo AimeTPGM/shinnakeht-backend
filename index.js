@@ -33,10 +33,10 @@ app.get('/', function (req, res) {
 app.get('/test', function(req, res){
 	console.log('GET - /test')
 	tenant1.save(function(err){
-	  if(err)
-	    console.log(err);
-	  else
-	    console.log(tenant1);
+		if(err)
+			console.log(err);
+		else
+		console.log(tenant1);
 	});
 	res.send()
 })
@@ -44,9 +44,8 @@ app.get('/test', function(req, res){
 app.get('/tenants', function(req, res){
 	console.log('GET - /tenants')
 	tenantModel.find(function (err, data) {
-	  if (err) return console.error(err);
-	  console.log(data)
-	  res.send(data)
+		if (err) return console.error(err);
+		res.send(data)
 	});
 
 })
@@ -54,9 +53,8 @@ app.get('/tenants', function(req, res){
 app.get('/rooms', function(req, res){
 	console.log('GET - /rooms')
 	roomTenantRelationModel.find(function (err, data) {
-	  if (err) return console.error(err);
-	  console.log(data)
-	  res.send(data)
+	 	if (err) return console.error(err);
+		res.send(data)
 	});
 
 })
@@ -65,9 +63,8 @@ app.get('/room/:roomNumber', function(req, res){
 	console.log('GET - /room')
 	var roomNo = req.params.roomNumber;
 	roomTenantRelationModel.find({room: roomNo}, function (err, data) {
-	  if (err) return console.error(err);
-	  console.log(data)
-	  res.send(data)
+		if (err) return console.error(err);
+		res.send(data)
 	});
 
 })
@@ -88,7 +85,7 @@ app.post('/tenants/new', function(req, res){
 					res.send(data)
 			  	}
 			});
-	  }
+		}
 	});
 
 	
@@ -96,5 +93,5 @@ app.post('/tenants/new', function(req, res){
 
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+  console.log('App listening on port 3000!')
 })

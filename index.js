@@ -7,17 +7,23 @@ const app = express()
 mongoose.connect('mongodb://localhost/tenants');
 
 
-// Create a schema
-var tenantsSchema = new mongoose.Schema({
+// Create tenants schema
+var tenantSchema = new mongoose.Schema({
   name: String,
   room: String,
   phone: String
 });
-// Create a model based on the schema
-var tenantsModel = mongoose.model('tenant', tenantsSchema);
 
-// Create a todo in memory
-var tenant1 = new tenantsModel({
+// Create room-tenants relationship schema
+var roomTenantRelationSchema = new mongoose.Schema({
+  room: String,
+  tenantId: String
+});
+
+// Create tenants model based on the schema
+var tenantModel = mongoose.model('tenant', tenantSchema);
+
+var tenant1 = new tenantModel({
   name: 'Aime',
   room: '101',
   phone: '086-975-9039'
@@ -43,7 +49,7 @@ app.get('/test', function(req, res){
 
 app.get('/tenants', function(req, res){
 	console.log('GET - /tenants')
-	tenantsModel.find(function (err, data) {
+	tenantModel.find(function (err, data) {
 	  if (err) return console.error(err);
 	  console.log(data)
 	  res.send(data)
@@ -54,8 +60,15 @@ app.get('/tenants', function(req, res){
 
 app.post('/tenants/new', function(req, res){
 	console.log('GET - /tenants/new')
-	console.log(req.body)
-	res.send()
+	tenantModel.create({name: req.body.name, 
+		room: req.body.room,
+  		phone: req.body.phone
+	}, function(err, data){
+	  if(err) console.log(err);
+	  else {
+	  	res.send(data)
+	  }
+	});
 })
 
 

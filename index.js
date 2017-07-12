@@ -10,7 +10,6 @@ mongoose.connect('mongodb://localhost/tenants');
 // Create tenants schema
 var tenantSchema = new mongoose.Schema({
   name: String,
-  room: String,
   phone: String
 });
 
@@ -22,12 +21,7 @@ var roomTenantRelationSchema = new mongoose.Schema({
 
 // Create tenants model based on the schema
 var tenantModel = mongoose.model('tenant', tenantSchema);
-
-var tenant1 = new tenantModel({
-  name: 'Aime',
-  room: '101',
-  phone: '086-975-9039'
-});
+var roomTenantRelationModel = mongoose.model('room', roomTenantRelationSchema);
 
 app.use(bodyParser.json())
 
@@ -57,18 +51,47 @@ app.get('/tenants', function(req, res){
 
 })
 
+app.get('/rooms', function(req, res){
+	console.log('GET - /rooms')
+	roomTenantRelationModel.find(function (err, data) {
+	  if (err) return console.error(err);
+	  console.log(data)
+	  res.send(data)
+	});
+
+})
+
+app.get('/room/:roomNumber', function(req, res){
+	console.log('GET - /room')
+	var roomNo = req.params.roomNumber;
+	roomTenantRelationModel.find({room: roomNo}, function (err, data) {
+	  if (err) return console.error(err);
+	  console.log(data)
+	  res.send(data)
+	});
+
+})
+
 
 app.post('/tenants/new', function(req, res){
 	console.log('GET - /tenants/new')
 	tenantModel.create({name: req.body.name, 
-		room: req.body.room,
   		phone: req.body.phone
 	}, function(err, data){
-	  if(err) console.log(err);
-	  else {
-	  	res.send(data)
+		if(err) console.log(err);
+		else { 
+			roomTenantRelationModel.create({room: req.body.room, 
+		  		tenantId: data._id
+			}, function(err, data){
+				if(err) console.log(err);
+				else {
+					res.send(data)
+			  	}
+			});
 	  }
 	});
+
+	
 })
 
 

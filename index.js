@@ -1,8 +1,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
+var bodyParser = require('body-parser')
+
 const app = express()
 
 mongoose.connect('mongodb://localhost/tenants');
+
 
 // Create a schema
 var tenantsSchema = new mongoose.Schema({
@@ -20,6 +23,8 @@ var tenant1 = new tenantsModel({
   phone: '086-975-9039'
 });
 
+app.use(bodyParser.json())
+
 app.get('/', function (req, res) {
 	console.log('GET - /')
 	res.send('Hello World!')
@@ -36,8 +41,8 @@ app.get('/test', function(req, res){
 	res.send()
 })
 
-app.get('/findAll', function(req, res){
-	console.log('GET - /findAll')
+app.get('/tenants', function(req, res){
+	console.log('GET - /tenants')
 	tenantsModel.find(function (err, data) {
 	  if (err) return console.error(err);
 	  console.log(data)
@@ -45,6 +50,14 @@ app.get('/findAll', function(req, res){
 	});
 
 })
+
+
+app.post('/tenants/new', function(req, res){
+	console.log('GET - /tenants/new')
+	console.log(req.body)
+	res.send()
+})
+
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')

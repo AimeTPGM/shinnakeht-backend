@@ -6,7 +6,7 @@ const app = express()
 
 mongoose.connect('mongodb://localhost/tenants');
 
-
+//Schema
 // Create tenants schema
 var tenantSchema = new mongoose.Schema({
   name: String,
@@ -19,28 +19,41 @@ var roomTenantRelationSchema = new mongoose.Schema({
   tenantId: String
 });
 
+// Create user schema
+var roomTenantRelationSchema = new mongoose.Schema({
+  username: String,
+  password: String
+});
+
+// Models
 // Create tenants model based on the schema
 var tenantModel = mongoose.model('tenant', tenantSchema);
+
+// Create room-tenants relationship model based on the schema
 var roomTenantRelationModel = mongoose.model('room', roomTenantRelationSchema);
+
+// Create user model based on the schema
+var userModel = mongoose.model('user', userSchema);
 
 app.use(bodyParser.json())
 
+/**
+* test server
+* Req: GET
+* params:
+* return:
+**/
 app.get('/', function (req, res) {
 	console.log('GET - /')
 	res.send('Hello World!')
 })
 
-app.get('/test', function(req, res){
-	console.log('GET - /test')
-	tenant1.save(function(err){
-		if(err)
-			console.log(err);
-		else
-		console.log(tenant1);
-	});
-	res.send()
-})
-
+/**
+* get all tenants
+* Req: GET
+* params:
+* return: list of tenants
+**/
 app.get('/tenants', function(req, res){
 	console.log('GET - /tenants')
 	tenantModel.find(function (err, data) {
@@ -50,6 +63,12 @@ app.get('/tenants', function(req, res){
 
 })
 
+/**
+* get all rooms
+* Req: GET
+* params:
+* return: list of room
+**/
 app.get('/rooms', function(req, res){
 	console.log('GET - /rooms')
 	roomTenantRelationModel.find(function (err, data) {
@@ -59,6 +78,13 @@ app.get('/rooms', function(req, res){
 
 })
 
+/**
+* get a room
+* Req: GET
+* params: 
+*	roomNumber - ex. 101, 102, 103
+* return: a room's information
+**/
 app.get('/room/:roomNumber', function(req, res){
 	console.log('GET - /room')
 	var roomNo = req.params.roomNumber;
@@ -69,8 +95,16 @@ app.get('/room/:roomNumber', function(req, res){
 
 })
 
-
-app.post('/tenants/new', function(req, res){
+/**
+* add new tenant
+* Req: POST
+* params:
+*	name – tenant's name
+*	phone – phone number
+*	room – tenant's room
+* return:
+**/
+app.post('/tenant/new', function(req, res){
 	console.log('GET - /tenants/new')
 	tenantModel.create({name: req.body.name, 
   		phone: req.body.phone
@@ -82,7 +116,7 @@ app.post('/tenants/new', function(req, res){
 			}, function(err, data){
 				if(err) console.log(err);
 				else {
-					res.send(data)
+					res.send()
 			  	}
 			});
 		}

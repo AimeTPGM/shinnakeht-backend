@@ -1,39 +1,20 @@
 const express = require('express')
-const mongoose = require('mongoose')
 var bodyParser = require('body-parser')
-
+var dbModel = require("./model/schema")
 const app = express()
-
-mongoose.connect('mongodb://localhost/tenants');
-
-//Schema
-// Create tenants schema
-var tenantSchema = new mongoose.Schema({
-  name: String,
-  phone: String
-});
-
-// Create room-tenants relationship schema
-var roomTenantRelationSchema = new mongoose.Schema({
-  room: String,
-  tenantId: String
-});
-
-// Create user schema
-var roomTenantRelationSchema = new mongoose.Schema({
-  username: String,
-  password: String
-});
 
 // Models
 // Create tenants model based on the schema
-var tenantModel = mongoose.model('tenant', tenantSchema);
+var tenant = dbModel.tenant;
 
 // Create room-tenants relationship model based on the schema
-var roomTenantRelationModel = mongoose.model('room', roomTenantRelationSchema);
+var room = dbModel.room;
 
 // Create user model based on the schema
-var userModel = mongoose.model('user', userSchema);
+var user = dbModel.user;
+
+// Create payment model based on the schema
+var payment = dbModel.payment;
 
 app.use(bodyParser.json())
 
@@ -54,9 +35,25 @@ app.get('/', function (req, res) {
 * params:
 * return: list of tenants
 **/
-app.get('/tenants', function(req, res){
-	console.log('GET - /tenants')
-	tenantModel.find(function (err, data) {
+app.get('/tenant/all', function(req, res){
+	console.log('GET - /tenant/all')
+	tenant.find(function (err, data) {
+		if (err) return console.error(err);
+		res.send(data)
+	});
+
+})
+
+/**
+* get a tenant
+* Req: GET
+* params:
+* return: a tenant
+**/
+app.get('/tenant/:tenantId', function(req, res){
+	var tenantId = req.params.tenantId;
+	console.log('GET - /tenant/'+tenantId)
+	tenant.find({_id: tenantId}, function (err, data) {
 		if (err) return console.error(err);
 		res.send(data)
 	});
@@ -69,9 +66,9 @@ app.get('/tenants', function(req, res){
 * params:
 * return: list of room
 **/
-app.get('/rooms', function(req, res){
-	console.log('GET - /rooms')
-	roomTenantRelationModel.find(function (err, data) {
+app.get('/room/all', function(req, res){
+	console.log('GET - /room/all')
+	room.find(function (err, data) {
 	 	if (err) return console.error(err);
 		res.send(data)
 	});
@@ -86,9 +83,9 @@ app.get('/rooms', function(req, res){
 * return: a room's information
 **/
 app.get('/room/:roomNumber', function(req, res){
-	console.log('GET - /room')
 	var roomNo = req.params.roomNumber;
-	roomTenantRelationModel.find({room: roomNo}, function (err, data) {
+	console.log('GET - /room/'+roomNo)
+	room.find({room: roomNo}, function (err, data) {
 		if (err) return console.error(err);
 		res.send(data)
 	});
@@ -105,13 +102,13 @@ app.get('/room/:roomNumber', function(req, res){
 * return:
 **/
 app.post('/tenant/new', function(req, res){
-	console.log('GET - /tenants/new')
-	tenantModel.create({name: req.body.name, 
+	console.log('POST - /tenants/new')
+	tenant.create({name: req.body.name, 
   		phone: req.body.phone
 	}, function(err, data){
 		if(err) console.log(err);
 		else { 
-			roomTenantRelationModel.create({room: req.body.room, 
+			room.create({room: req.body.room, 
 		  		tenantId: data._id
 			}, function(err, data){
 				if(err) console.log(err);
@@ -121,10 +118,56 @@ app.post('/tenant/new', function(req, res){
 			});
 		}
 	});
-
-	
 })
 
+/**
+* add user
+* Req: POST
+* params:
+*	username – user's name (for login)
+*	password – password (Encrypted)
+* return: 
+**/
+app.post('/user/new', function(req, res){
+	console.log('POST - /new/user')
+	user.create({username: req.body.username, 
+  		password: req.body.password
+	}, function(err, data){
+		if(err) console.log(err);
+		else { 
+			res.send(data)
+		}
+	});
+})
+
+/**
+* return all users
+* Req: GET
+* params:
+* return: list of all user
+**/
+app.get('/user/all', function(req, res){
+	console.log('GET - /user/all')
+	user.find(function (err, data) {
+	 	if (err) return console.error(err);
+		res.send(data)
+	});
+})
+
+/**
+* return all users
+* Req: GET
+* params:
+* return: list of all user
+**/
+app.get('/user/:username', function(req, res){
+	var username = req.params.username
+	console.log('GET - /user/'+username)
+	user.find({username: username},function (err, data) {
+	 	if (err) return console.error(err);
+		res.send(data)
+	});
+})
 
 app.listen(3000, function () {
   console.log('App listening on port 3000!')

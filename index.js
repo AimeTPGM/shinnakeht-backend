@@ -5,16 +5,16 @@ const app = express()
 
 // Models
 // Create tenants model based on the schema
-var tenant = dbModel.tenant;
+var tenant = dbModel.tenant
 
 // Create room-tenants relationship model based on the schema
-var room = dbModel.room;
+var room = dbModel.room
 
 // Create user model based on the schema
-var user = dbModel.user;
+var user = dbModel.user
 
 // Create payment model based on the schema
-var payment = dbModel.payment;
+var payment = dbModel.payment
 
 app.use(bodyParser.json())
 
@@ -38,9 +38,9 @@ app.get('/', function (req, res) {
 app.get('/tenant/all', function(req, res){
 	console.log('GET - /tenant/all')
 	tenant.find(function (err, data) {
-		if (err) return console.error(err);
+		if (err) return console.error(err)
 		res.send(data)
-	});
+	})
 
 })
 
@@ -51,13 +51,31 @@ app.get('/tenant/all', function(req, res){
 * return: a tenant
 **/
 app.get('/tenant/:tenantId', function(req, res){
-	var tenantId = req.params.tenantId;
+	var tenantId = req.params.tenantId
 	console.log('GET - /tenant/'+tenantId)
 	tenant.find({_id: tenantId}, function (err, data) {
-		if (err) return console.error(err);
+		if (err) return console.error(err)
 		res.send(data)
-	});
+	})
 
+})
+
+/**
+* add new tenant
+* Req: POST
+* params:
+*	name – tenant's name
+*	phone – phone number
+* return:
+**/
+app.post('/tenant/new', function(req, res){
+	console.log('POST - /tenants/new')
+	tenant.create({name: req.body.name, 
+  		phone: req.body.phone
+	}, function(err, data){
+		if(err) console.log(err)
+		res.send()
+	})
 })
 
 /**
@@ -69,9 +87,9 @@ app.get('/tenant/:tenantId', function(req, res){
 app.get('/room/all', function(req, res){
 	console.log('GET - /room/all')
 	room.find(function (err, data) {
-	 	if (err) return console.error(err);
+	 	if (err) return console.error(err)
 		res.send(data)
-	});
+	})
 
 })
 
@@ -83,41 +101,30 @@ app.get('/room/all', function(req, res){
 * return: a room's information
 **/
 app.get('/room/:roomNumber', function(req, res){
-	var roomNo = req.params.roomNumber;
+	var roomNo = req.params.roomNumber
 	console.log('GET - /room/'+roomNo)
 	room.find({room: roomNo}, function (err, data) {
-		if (err) return console.error(err);
+		if (err) return console.error(err)
 		res.send(data)
-	});
+	})
 
 })
 
 /**
-* add new tenant
-* Req: POST
-* params:
-*	name – tenant's name
-*	phone – phone number
-*	room – tenant's room
-* return:
+* create a room
+* Req: GET
+* params: 
+*	roomNumber - ex. 101, 102, 103
+* return: a room's information
 **/
-app.post('/tenant/new', function(req, res){
-	console.log('POST - /tenants/new')
-	tenant.create({name: req.body.name, 
-  		phone: req.body.phone
+app.post('/room/new', function(req, res){
+	console.log('POST - /room/new')
+	room.create({roomNumber: req.body.roomNumber, 
+  		currentUser: req.body.userId
 	}, function(err, data){
-		if(err) console.log(err);
-		else { 
-			room.create({room: req.body.room, 
-		  		tenantId: data._id
-			}, function(err, data){
-				if(err) console.log(err);
-				else {
-					res.send()
-			  	}
-			});
-		}
-	});
+		if(err) console.log(err)
+		res.send(data)
+	})
 })
 
 /**
@@ -131,13 +138,13 @@ app.post('/tenant/new', function(req, res){
 app.post('/user/new', function(req, res){
 	console.log('POST - /new/user')
 	user.create({username: req.body.username, 
-  		password: req.body.password
+  		password: req.body.password,
+  		tenantId: req.body.tenantId
 	}, function(err, data){
-		if(err) console.log(err);
-		else { 
-			res.send(data)
-		}
-	});
+		if(err) console.log(err)
+		res.send(data)
+		
+	})
 })
 
 /**
@@ -149,13 +156,13 @@ app.post('/user/new', function(req, res){
 app.get('/user/all', function(req, res){
 	console.log('GET - /user/all')
 	user.find(function (err, data) {
-	 	if (err) return console.error(err);
+	 	if (err) return console.error(err)
 		res.send(data)
-	});
+	})
 })
 
 /**
-* return all users
+* return a users
 * Req: GET
 * params:
 * return: list of all user
@@ -164,9 +171,65 @@ app.get('/user/:username', function(req, res){
 	var username = req.params.username
 	console.log('GET - /user/'+username)
 	user.find({username: username},function (err, data) {
-	 	if (err) return console.error(err);
+	 	if (err) return console.error(err)
 		res.send(data)
-	});
+	})
+})
+
+/**
+* return all payment
+* Req: GET
+* params:
+* return: list of all payment
+**/
+app.get('/payment/all', function(req, res){
+	console.log('GET - /user/all')
+	payment.find(function (err, data) {
+	 	if (err) return console.error(err)
+		res.send(data)
+	})
+})
+
+/**
+* return a payment
+* Req: GET
+* params:
+* return: list of a payment
+**/
+app.get('/payment/:roomNumber', function(req, res){
+	var roomNumber = req.params.roomNumber
+	console.log('GET - /payment/'+roomNumber)
+	payment.find({roomNumber: roomNumber},function (err, data) {
+	 	if (err) return console.error(err)
+		res.send(data)
+	})
+})
+
+/**
+* create a new payment
+* Req: POST
+* params:
+* return: list of all payment
+**/
+app.post('/payment/new', function(req, res){
+	var data = req.body
+	var date = new Date()
+	var currentDate = date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()
+	console.log(currentDate)
+	console.log('POST - /payment/new')
+	payment.create(
+		{
+			roomNumber: data.roomNumber, 
+  		rent: data.rent,
+  		tenantId: data.tenantId,
+  		water: data.water,
+  		electricity: data. electricity,
+  		date: currentDate,
+  		status: "unpaid"
+	}, function(err, data){
+		if(err) console.log(err)
+		res.send(data)
+	})
 })
 
 app.listen(3000, function () {

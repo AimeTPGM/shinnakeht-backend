@@ -12,8 +12,7 @@ var tenantSchema = new mongoose.Schema({
 // Create room-tenants relationship schema
 var roomSchema = new mongoose.Schema({
   roomNumber: String,
-  currentUser: String,
-  currentPrice: String
+  currentUser: String
 });
 
 // Create room schema
@@ -26,11 +25,12 @@ var userSchema = new mongoose.Schema({
 // Create room schema
 var paymentSchema = new mongoose.Schema({
   roomNumber: String,
-	rent: String,
+  rent: String,
   date: String,
   tenantId: String,
   water: String,
-  electicity: String
+  electicity: String,
+  status: String
 });
 
 // Models
